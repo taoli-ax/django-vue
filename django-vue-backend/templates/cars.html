@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        <h2>hello world!</h2>
+        <p>{{now}}</p>
+        <div>
+            <ul>
+                {% for car in carinfo_list%}
+                <li>{{car}} </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+        <form method="post">
+            {%csrf_token%}
+            {{form.as_p}}
+            <input type="submit" value="save">
+        </form>
+</body>
+</html>
