@@ -15,11 +15,11 @@ class CarInfoSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, attrs):
         # username mobile 都可能是登录账户
-        car_name = attrs.get('name')
+        # car_name = attrs.get('name')
         print("验证attr: ",attrs)
-        if isinstance(car_name, str):  # 手机号正则
+        # if isinstance(car_name, str):  # 手机号正则
            
-            payload = self.jwt_payload_handler()  # 通过user拿到payload
+            # payload = self.jwt_payload_handler()  # 通过user拿到payload
         #     token = self.jwt_encode_handler(payload)  # 通过payload拿到token
         #     print('生成token：' + token)
         #     # 视图类和序列化类之间通过context这个字典来传递数据
