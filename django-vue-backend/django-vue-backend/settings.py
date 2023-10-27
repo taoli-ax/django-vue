@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os.path
 from pathlib import Path
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,8 +42,23 @@ INSTALLED_APPS = [
     'cars.apps.CarsConfig',
     'corsheaders',
 
-
 ]
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+#         #'rest_framework.authentication.SessionAuthentication',
+#         #'rest_framework.authentication.BasicAuthentication',
+#     ),
+# }
+
+
+# JWT_AUTH = {
+# 	# JWT_EXPIRATION_DELTA 指明token的有效期
+#     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+# }
+
+# 原文链接：https://blog.csdn.net/Karse_/article/details/129910708
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

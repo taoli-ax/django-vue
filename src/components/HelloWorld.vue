@@ -50,7 +50,7 @@ export default {
     const { proxy } = getCurrentInstance();
     const getCarinfo = () => {
       proxy.$http
-        .get("/cars/carinfo/")
+        .get("/api/carinfo/")
         .then((res) => {
           //请求成功
           console.log(res.data)
@@ -63,7 +63,7 @@ export default {
     };
     const addCarinfo = () => {
       proxy.$http
-        .post("/cars/carinfo/", {'name':car.carName})
+        .post("/api/carinfo/", {'name':car.carName})
         .then((res) => {
           //请求成功
           console.log(res.data)
