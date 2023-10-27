@@ -1,3 +1,4 @@
+from accounts.api.authentication import JsonAuthentication
 from accounts.api.serializers import LoginSerializer, UserSerializer
 from django.shortcuts import render
 from rest_framework import viewsets
@@ -14,18 +15,27 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes= [JsonAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
 
 
 
-class AccountViewSet(viewsets.ViewSet):
-    serializer_class= LoginSerializer
-
+class AccountViewSet(viewsets.ModelViewSet):
+    serializer_class = LoginSerializer
     @action(methods=['post'], detail=False)
     def login(self, request):
         serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            print("valid data")
+        if not serializer.is_valid():
+            return Response({
+                "success": False,
+                "message": "Please check input",
+                "errors": serializer.errors,
+            }, status=400)
+        
+        token = serializer.context.get('token')
+        name = serializer.context.get('username')
+        id = serializer.context.get('id')
+        
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
         user = authenticate(username=username, password=password)
@@ -36,8 +46,13 @@ class AccountViewSet(viewsets.ViewSet):
                     "message": "username and password does not match",
                 }, status=400)
         login(request, user)
+
         return Response({
-            "success": True,
-            "user": UserSerializer(instance=user).data,
-        })
+            'token':token,
+            'id':id,
+            'username':username})
+        # return Response({
+        #     "success": True,
+        #     "user": UserSerializer(instance=user).data,
+        # })
 

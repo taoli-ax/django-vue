@@ -23,6 +23,13 @@ axios_instance.interceptors.request.use(
         let regex = /.*csrftoken=([^;.]*).*$/;
         console.log('匹配csrftoken: ',document.cookie.match(regex))
         config.headers['X-CSRFTOKEN']= document.cookie.match(regex) === null? null : document.cookie.match(regex)[1]
+
+        let token = localStorage.getItem('token') || sessionStorage.getItem('token')
+        console.log("interceptor token: ",token)
+        if (token) {
+            config.headers['Authorization'] = 'Bearer ' + token;
+        }
+
         return config;
     },
     error => {
