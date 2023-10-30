@@ -20,12 +20,8 @@ export default {
         const login=()=>{
             proxy.$http.post('/api/accounts/login/',{'username':userinfo.username,'password':userinfo.password}).
             then(response=>{
-                console.log(response)
-                sessionStorage.clear()
-                localStorage.token = response.data.token;     // 存储token
-                localStorage.id = response.data.id;
-                localStorage.username = response.data.username;
-
+                
+                console.log('login vue: '+response)
                 //原文链接：https://blog.csdn.net/Karse_/article/details/129910708
             }).
             catch(err=>console.log(err))
