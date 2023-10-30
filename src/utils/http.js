@@ -2,6 +2,7 @@
 // 导入封装好的axios实例
 import axios from "axios";
 import qs from "qs";
+import router from '../router/index'
 
 // axios.defaults.baseURL = ''  //正式
 // axios.defaults.baseURL = 'http://localhost:8000' //测试
@@ -13,7 +14,7 @@ import qs from "qs";
 // //设置超时
 // axios.defaults.timeout = 15000;
 const axios_instance = axios.create({
-    baseURL:'http://localhost:8000',
+    baseURL:'http://localhost:8080',
     timeout:2000,
     withCredentials:true
 })
@@ -39,24 +40,25 @@ axios_instance.interceptors.request.use(
 
 axios_instance.interceptors.response.use(
     response => {
-        // if (response.status == 200) {
-        //     return Promise.resolve(response);
-        // } else {
-        //     return Promise.reject(response);
-        // }
-        // 该返回的数据则是axios.then(res)中接收的数据
+        if(response.data.token) {
+            localStorage.setItem('token',response.data.token.access)
+            router.push('/')
+        }
         return response
     },
     error => {
-
-        alert(JSON.stringify(error), '请求异常', {
-            confirmButtonText: '确定',
-            callback: (action) => {
-                console.log(action)
+        if (error.response) {
+            switch (error.response.status) {
+              case 401:
+                localStorage.removeItem('token')
+                router.replace({
+                  path: '/login',
+                  query: {redirect: router.currentRoute.fullPath}   //登录成功后跳入浏览的当前页面
+                })
             }
-        });
-        // 该返回的数据则是axios.catch(err)中接收的数据
-        return Promise.reject(err)
+        }
+      
+        return Promise.reject(error)
     }
 );
 export {axios_instance}

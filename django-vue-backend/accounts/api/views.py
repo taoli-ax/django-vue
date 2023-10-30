@@ -25,20 +25,17 @@ class AccountViewSet(viewsets.ViewSet):
     @action(methods=['post'], detail=False)
     def login(self, request):
         serializer = LoginSerializer(data=request.data)
-        if not serializer.is_valid():
-           print("this line will not be excuted")
-  
-        user_id = serializer.validated_data['user_id']
-        user = User.objects.get(pk=user_id)
-        login(request, user)
-
-        return Response({
-            'success': True,
-            'token':{
-                'refresh': serializer.validated_data['refresh'],
-                'access': serializer.validated_data['access'],
-            },
-            'user': user.username
-          })
+        if serializer.is_valid():
+            user_id = serializer.validated_data['user_id']
+            user = User.objects.get(pk=user_id)
+            login(request, user)
+            return Response({
+                'success': True,
+                'token':{
+                    'refresh': serializer.validated_data['refresh'],
+                    'access': serializer.validated_data['access'],
+                },
+                'user': user.username
+            })
 
 
