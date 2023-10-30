@@ -32,7 +32,7 @@
      
      <input type="text" v-model="carName">
      <button type="button" @click="addCarinfo()">add</button>
-
+     <button type="button" @click="back()">back</button>
 </div>
  
   </div>
@@ -43,6 +43,9 @@ export default {
   name: 'carinfo',
 
   setup(){
+    const back = ()=>{
+            proxy.$router.push('/')
+        }
     const car = reactive({
       carinfo:[],
       carName:''
@@ -75,6 +78,7 @@ export default {
     return {
       getCarinfo,
       addCarinfo,
+      back,
       ...toRefs(car)
     };
 
