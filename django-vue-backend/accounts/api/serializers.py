@@ -1,10 +1,7 @@
 import re
-from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
 from rest_framework import serializers, exceptions
-
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,29 +10,28 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'email')
 
 
-class LoginSerializer(serializers.ModelSerializer):
+class LoginSerializer(TokenObtainPairSerializer):
     username = serializers.CharField()
     password = serializers.CharField()
 
-    class Meta:
-        model = User
-        fields = ('username','password')
+
+    @classmethod
+    def get_token(self, user):
+        token = super().get_token(user)
+        token['user'] = user.username
+        print("加入 token 的 user 信息:",user)
+        return token
+        
 
     def validate(self, attrs):
-         # username mobile 都可能是登录账户
-        username = attrs.get('username')
-        password = attrs.get('password')
-
-        user = User.objects.filter(username=username).first() # 用户名登录
-        if user and user.check_password(password):  # 如果登录成功,生成token
-            payload = jwt_payload_handler(user)  # 通过user拿到payload
-            token = jwt_encode_handler(payload)  # 通过payload拿到token
-            print('生成token：' + token)
-            # 视图类和序列化类之间通过context这个字典来传递数据
-            self.context['token'] = token
-            self.context['username'] = user.username
-            self.context['id'] = user.id
-            return attrs
-        else:
-            raise exceptions.ValidationError("账户或密码错误")
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+        # 令牌到期时间
+        data['expire'] = refresh.access_token.payload['exp']  # 有效期
+        # 用户名
+        data['user_id'] = self.user.id
+        return data
+        # 原文链接：https://blog.csdn.net/u014783334/article/details/124841293
 

@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from cars.views import CarInfoViewSets
+from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView
+
 
 router = routers.SimpleRouter()
 router.register(r'api/carinfo',CarInfoViewSets)
@@ -26,7 +28,12 @@ router.register(r'api/accounts',AccountViewSet, basename='accounts')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('cars/', include('cars.urls'))
-    path('', include(router.urls))
+    path('', include(router.urls)),
+     # JTW认证接口
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # 刷新JWT有效期接口
+    path('api/refresh', TokenObtainPairView.as_view(), name='token_refresh'),
+    # 验证token有效期接口
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
 ]

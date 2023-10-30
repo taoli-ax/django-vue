@@ -54,4 +54,4 @@ class CarViewSetForCreate(CreateView):
 class CarInfoViewSets(ModelViewSet):
     queryset = CarInfo.objects.all()
     serializer_class = CarInfoSerializer
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
